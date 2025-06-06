@@ -1,0 +1,18 @@
+cmtsolutions:
+  - class: File
+    path: CF1/DATA/CMTSOLUTION
+  - class: File
+    path: CF2/DATA/CMTSOLUTION
+meshdir:
+  class: Directory
+  path: MESH/CF_water/CFwater/100m
+parfiles:
+  - class: File
+    path: CF1/DATA/Par_file
+  - class: File
+    path: CF2/DATA/Par_file
+stations:
+  - class: File
+    path: CF1/DATA/STATIONS
+  - class: File
+    path: CF2/DATA/STATIONS
