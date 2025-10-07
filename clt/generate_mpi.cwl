@@ -16,6 +16,8 @@ requirements:
         entryname: $(inputs.localpath)
         writable: true
   InlineJavascriptRequirement: {}
+  ResourceRequirement:
+    coresMin: $(inputs.processes)
 baseCommand: [mpirun]
 arguments:
   - position: 2

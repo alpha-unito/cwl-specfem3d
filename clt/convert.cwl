@@ -1,5 +1,13 @@
 cwlVersion: v1.2
 class: CommandLineTool
+hints:
+  SoftwareRequirement:
+    packages:
+      - package: h5py
+      - package: meshio
+      - package: mpi4py
+      - package: numpy
+      - package: scipy
 requirements:
   InitialWorkDirRequirement:
     listing:
@@ -7,6 +15,8 @@ requirements:
   InlineJavascriptRequirement:
     expressionLib:
       - { $include: parfile.js }
+  ResourceRequirement:
+    coresMin: $(inputs.processes)
 baseCommand: [mpirun]
 arguments:
   - position: 3
@@ -27,7 +37,9 @@ inputs:
             position: 4
             prefix: --dx
   moviedata: File[]
-  parfile: File
+  parfile:
+    type: File
+    loadContents: true
   processes:
     type: int
     inputBinding:

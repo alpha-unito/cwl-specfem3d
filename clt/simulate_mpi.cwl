@@ -19,6 +19,8 @@ requirements:
         entryname: OUTPUT_FILES/$(inputs.surfaceheader.basename)
       - entry: $(inputs.valuesheader)
         entryname: OUTPUT_FILES/$(inputs.valuesheader.basename)
+  ResourceRequirement:
+    coresMin: $(inputs.processes)
 baseCommand: [mpirun]
 arguments:
   - position: 2

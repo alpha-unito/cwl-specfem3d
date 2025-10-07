@@ -31,9 +31,17 @@ inputs:
         step: float
   meshdir: Directory
   parfiles: File[]
+  reduction:
+    type:
+      type: record
+      fields:
+        script: File
   stations: File[]
 
 outputs:
+  aggregated:
+    type: File
+    outputSource: reduce/aggregated
   full:
     type: File[]
     outputSource: specfem3d/full
@@ -97,3 +105,9 @@ steps:
     scatter: [cmtsolution, parfile, stations]
     scatterMethod: dotproduct
     out: [full, graphics, headers, moviedata, outfiles, pgv, seismograms, shakingdata, timestamps, vz]
+  reduce:
+    run: clt/reduce.cwl
+    in:
+      full: specfem3d/full
+      reduction: reduction
+    out: [aggregated]

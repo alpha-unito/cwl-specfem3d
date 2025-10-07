@@ -25,10 +25,6 @@ inputs:
   database: Directory
   localpath: string
   parfile: File
-  processes:
-    type: int
-    inputBinding:
-      position: 1
   stations: File
   surfaceheader: File
   valuesheader: File

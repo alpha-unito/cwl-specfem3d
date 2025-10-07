@@ -1,6 +1,5 @@
 # Python
 venv/
 
-# SPECFEM3D
-DATA/
-OUTPUT_FILES
+# StreamFlow
+.streamflow
