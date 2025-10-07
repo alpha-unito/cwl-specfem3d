@@ -27,7 +27,9 @@ inputs:
             position: 4
             prefix: --dx
   moviedata: File[]
-  parfile: File
+  parfile:
+    type: File
+    loadContents: true
   processes:
     type: int
     inputBinding:

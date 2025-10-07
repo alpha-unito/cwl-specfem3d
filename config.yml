@@ -1,23 +1,27 @@
 cmtsolutions:
   - class: File
-    path: CF1/DATA/CMTSOLUTION
+    path: data/CF1/CMTSOLUTION
   - class: File
-    path: CF2/DATA/CMTSOLUTION
+    path: data/CF2/CMTSOLUTION
 interpolation:
   script:
     class: File
-    path: mpi_moviedata2vtk.py
+    path: scripts/mpi_moviedata2vtk.py
   step: 1000
 meshdir:
   class: Directory
-  path: MESH/CF_water/CFwater/100m
+  path: data/MESH
 parfiles:
   - class: File
-    path: CF1/DATA/Par_file
+    path: data/CF1/Par_file
   - class: File
-    path: CF2/DATA/Par_file
+    path: data/CF2/Par_file
+reduction:
+  script:
+    class: File
+    path: scripts/mpi_moviedata2vtk.py
 stations:
   - class: File
-    path: CF1/DATA/STATIONS
+    path: data/CF1/STATIONS
   - class: File
-    path: CF2/DATA/STATIONS
+    path: data/CF2/STATIONS

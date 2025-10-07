@@ -76,6 +76,7 @@ steps:
       database: database
       localpath: localpath
       parfile: parfile
+      processes: processes
       stations: stations
       surfaceheader: surfaceheader
       valuesheader: valuesheader
