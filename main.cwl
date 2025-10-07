@@ -23,11 +23,20 @@ requirements:
 
 inputs:
   cmtsolutions: File[]
+  interpolation:
+    type:
+      type: record
+      fields:
+        script: File
+        step: float
   meshdir: Directory
   parfiles: File[]
   stations: File[]
 
 outputs:
+  full:
+    type: File[]
+    outputSource: specfem3d/full
   graphics:
     type: File[]
     outputSource: specfem3d/graphics
@@ -52,6 +61,9 @@ outputs:
         type: array
         items: File
     outputSource: specfem3d/outfiles
+  pgv:
+    type: File[]
+    outputSource: specfem3d/pgv
   seismograms:
     type:
       type: array
@@ -69,15 +81,19 @@ outputs:
         type: array
         items: File
     outputSource: specfem3d/timestamps
+  vz:
+    type: File[]
+    outputSource: specfem3d/vz
 
 steps:
   specfem3d:
     run: specfem3d.cwl
     in:
       cmtsolution: cmtsolutions
+      interpolation: interpolation
       meshdir: meshdir
       parfile: parfiles
       stations: stations
-    scatter: [cmtsolutions, parfiles, stations]
+    scatter: [cmtsolution, parfile, stations]
     scatterMethod: dotproduct
-    out: [graphics, headers, moviedata, outfiles, seismograms, shakingdata, timestamps]
+    out: [full, graphics, headers, moviedata, outfiles, pgv, seismograms, shakingdata, timestamps, vz]

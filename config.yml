@@ -3,6 +3,11 @@ cmtsolutions:
     path: CF1/DATA/CMTSOLUTION
   - class: File
     path: CF2/DATA/CMTSOLUTION
+interpolation:
+  script:
+    class: File
+    path: mpi_moviedata2vtk.py
+  step: 1000
 meshdir:
   class: Directory
   path: MESH/CF_water/CFwater/100m

@@ -5,10 +5,19 @@ requirements:
   SubworkflowFeatureRequirement: {}
 inputs:
   cmtsolution: File
+  interpolation:
+    type:
+      type: record
+      fields:
+        script: File
+        step: float
   meshdir: Directory
   parfile: File
   stations: File
 outputs:
+  full:
+    type: File
+    outputSource: convert/full
   graphics:
     type: File
     outputSource: simulate/graphics
@@ -28,6 +37,9 @@ outputs:
       - simulate/outsources
       - simulate/outstations
       - simulate/starttimeloop
+  pgv:
+    type: File
+    outputSource: convert/pgv
   seismograms:
     type: File[]
     outputSource: simulate/seismograms
@@ -37,6 +49,9 @@ outputs:
   timestamps:
     type: File[]
     outputSource: simulate/timestamps
+  vz:
+    type: File
+    outputSource: convert/vz
 steps:
   get_local_path:
     run: clt/get_local_path.cwl
@@ -80,3 +95,11 @@ steps:
       surfaceheader: generate/surfaceheader
       valuesheader: generate/valuesheader
     out: [graphics, moviedata, outsolver, outsources, outstations, seismograms, shakingdata, starttimeloop, timestamps]
+  convert:
+    run: clt/convert.cwl
+    in:
+      interpolation: interpolation
+      moviedata: simulate/moviedata
+      parfile: parfile
+      processes: get_processes/out
+    out: [full, pgv, vz]
