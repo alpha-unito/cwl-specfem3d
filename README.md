@@ -36,6 +36,12 @@ pip install cwlref-runner
 
 Note that this workflow does not build the SPECFEM3D suite from scratch. Instead, it expects that all SPECFEM3D-related commands are available in the user's `$PATH`. Please follow the [official documentation](https://specfem3d.readthedocs.io/en/latest/02_getting_started/) to build and configure SPECFEM3D in your target execution environment.
 
+In addition, the last Python scripts require some external dependencies to execute properly:
+
+```bash
+pip install h5py meshio mpi4py numpy scipy 
+```
+
 Once all software and data dependencies are installed, the workflow can be launched using the following command:
 
 ```bash

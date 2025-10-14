@@ -26,9 +26,6 @@ outputs:
     outputSource:
       - generate/surfaceheader
       - generate/valuesheader
-  moviedata:
-    type: File[]
-    outputSource: simulate/moviedata
   outfiles:
     type: File[]
     outputSource:
@@ -36,7 +33,6 @@ outputs:
       - simulate/outsolver
       - simulate/outsources
       - simulate/outstations
-      - simulate/starttimeloop
   pgv:
     type: File
     outputSource: convert/pgv
@@ -46,9 +42,6 @@ outputs:
   shakingdata:
     type: File
     outputSource: simulate/shakingdata
-  timestamps:
-    type: File[]
-    outputSource: simulate/timestamps
   vz:
     type: File
     outputSource: convert/vz
@@ -94,7 +87,7 @@ steps:
       stations: stations
       surfaceheader: generate/surfaceheader
       valuesheader: generate/valuesheader
-    out: [graphics, moviedata, outsolver, outsources, outstations, seismograms, shakingdata, starttimeloop, timestamps]
+    out: [graphics, moviedata, outsolver, outsources, outstations, seismograms, shakingdata]
   convert:
     run: clt/convert.cwl
     in:

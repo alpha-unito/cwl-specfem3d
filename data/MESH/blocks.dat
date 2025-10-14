@@ -1,0 +1,10 @@
+1; vol6 ; nattr 0 ;  ; HEX8 1620
+2; vol17 ; nattr 0 ;  ; HEX8 134040
+3; vol112 ; nattr 0 ;  ; HEX8 3600
+4; vol114 ; nattr 0 ;  ; HEX8 4500
+1001; face_topo ; nattr 0 ;  ; SHELL4 3600
+1002; face_abs_bottom ; nattr 0 ;  ; SHELL4 3660
+1003; face_abs_xmin ; nattr 0 ;  ; SHELL4 2396
+1004; face_abs_ymin ; nattr 0 ;  ; SHELL4 2880
+1005; face_abs_xmax ; nattr 0 ;  ; SHELL4 2396
+1006; face_abs_ymax ; nattr 0 ;  ; SHELL4 2460

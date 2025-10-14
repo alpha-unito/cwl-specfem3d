@@ -55,18 +55,6 @@ outputs:
       - simulate_simple/shakingdata
       - simulate_mpi/shakingdata
     pickValue: the_only_non_null
-  starttimeloop:
-    type: File
-    outputSource:
-      - simulate_simple/starttimeloop
-      - simulate_mpi/starttimeloop
-    pickValue: the_only_non_null
-  timestamps:
-    type: File[]
-    outputSource:
-      - simulate_simple/timestamps
-      - simulate_mpi/timestamps
-    pickValue: the_only_non_null 
 steps:
   simulate_simple:
     when: $(inputs.processes == 1)
@@ -80,7 +68,7 @@ steps:
       stations: stations
       surfaceheader: surfaceheader
       valuesheader: valuesheader
-    out: [graphics, moviedata, outsolver, outsources, outstations, seismograms, shakingdata, starttimeloop, timestamps]
+    out: [graphics, moviedata, outsolver, outsources, outstations, seismograms, shakingdata]
   simulate_mpi:
     when: $(inputs.processes > 1)
     run: clt/simulate_mpi.cwl
@@ -93,4 +81,4 @@ steps:
       stations: stations
       surfaceheader: surfaceheader
       valuesheader: valuesheader
-    out: [graphics, moviedata, outsolver, outsources, outstations, seismograms, shakingdata, starttimeloop, timestamps]
+    out: [graphics, moviedata, outsolver, outsources, outstations, seismograms, shakingdata]

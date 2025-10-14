@@ -57,11 +57,3 @@ outputs:
     type: File
     outputBinding:
       glob: OUTPUT_FILES/shakingdata
-  starttimeloop:
-    type: File
-    outputBinding:
-      glob: OUTPUT_FILES/starttimeloop.txt
-  timestamps:
-    type: File[]
-    outputBinding:
-      glob: OUTPUT_FILES/timestamp*

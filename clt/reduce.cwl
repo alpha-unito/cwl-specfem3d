@@ -30,3 +30,4 @@ outputs:
     type: File
     outputBinding:
       glob: "aggregated_shakemovie_full.xdmf"
+    secondaryFiles: ^.h5

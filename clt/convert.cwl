@@ -50,11 +50,14 @@ outputs:
     type: File
     outputBinding:
       glob: "*_full.xdmf"
+    secondaryFiles: ^.h5
   pgv:
     type: File
     outputBinding:
       glob: "*_pgv.xdmf"
+    secondaryFiles: ^.h5
   vz:
     type: File
     outputBinding:
       glob: "*_vz.xdmf"
+    secondaryFiles: ^.h5

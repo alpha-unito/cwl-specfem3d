@@ -55,13 +55,6 @@ outputs:
         type: array
         items: File
     outputSource: specfem3d/headers
-  moviedata:
-    type:
-      type: array
-      items:
-        type: array
-        items: File
-    outputSource: specfem3d/moviedata
   outfiles:
     type:
       type: array
@@ -82,17 +75,9 @@ outputs:
   shakingdata:
     type: File[]
     outputSource: specfem3d/shakingdata
-  timestamps:
-    type:
-      type: array
-      items:
-        type: array
-        items: File
-    outputSource: specfem3d/timestamps
   vz:
     type: File[]
     outputSource: specfem3d/vz
-
 steps:
   specfem3d:
     run: specfem3d.cwl
@@ -104,7 +89,7 @@ steps:
       stations: stations
     scatter: [cmtsolution, parfile, stations]
     scatterMethod: dotproduct
-    out: [full, graphics, headers, moviedata, outfiles, pgv, seismograms, shakingdata, timestamps, vz]
+    out: [full, graphics, headers, outfiles, pgv, seismograms, shakingdata, vz]
   reduce:
     run: clt/reduce.cwl
     in:
