@@ -10,6 +10,7 @@ License: Apache-2.0
 
 import argparse
 import gc
+import glob
 import os
 from timeit import default_timer as timer
 
@@ -25,6 +26,11 @@ size = comm.Get_size()
 rank = comm.Get_rank()
 print(rank, size)
 
+if size < 2:
+    raise ValueError("At least 2 MPI processes are needed")
+
+
+TERMINATION_MSG = -1
 
 def read_moviedata(
     f, step=250, endian=">f", xmin=None, xmax=None, ymin=None, ymax=None
@@ -112,100 +118,42 @@ dx = args.dx
 fs = args.file
 
 if rank == 0:
-
     print("timestep", dt, " horizontal step", dx)
-    import glob
-
-    filenames = glob.glob(fs)
-    filenames.sort()
-    chunks = [[] for _ in range(size)]
-    for i, chunk in enumerate(filenames):
-        chunks[i % size].append(chunk)
-
-    print(chunks)
+    termination_msgs = 0
+    with (
+        meshio.xdmf.TimeSeriesWriter("shakemovie_full.xdmf") as full_writer,
+        meshio.xdmf.TimeSeriesWriter("shakemovie_pgv.xdmf") as pgv_writer,
+        meshio.xdmf.TimeSeriesWriter("shakemovie_vz.xdmf") as vz_writer
+    ):
+        while termination_msgs < (size - 1):
+            if (idx := comm.recv(source=MPI.ANY_SOURCE)) != TERMINATION_MSG:
+                mesh = meshio.read(f"moviedata{idx:06}.vtu")
+                if not full_writer.has_mesh:
+                    full_writer.write_points_cells(mesh.points, mesh.cells)
+                    pgv_writer.write_points_cells(mesh.points, mesh.cells)
+                    vz_writer.write_points_cells(mesh.points, mesh.cells)
+                t = idx * dt if dt != 0 else idx
+                full_writer.write_data(t, point_data=mesh.point_data)
+                pgv_writer.write_data(t, point_data={"pgv": mesh.point_data["pgv"]})
+                vz_writer.write_data(t, point_data={"vz": mesh.point_data["vz"]})
+            else:
+                termination_msgs += 1
+                print(f"Received {termination_msgs}/{size - 1} termination messages")
 else:
-    chunks = None
-
-
-chunks = comm.scatter(chunks, root=0)
-
-for i, f in enumerate(chunks):
-    start = timer()
-
-    if os.path.exists(f + ".vtu"):
-        print("with meshio:", rank, "File " + f + ".vtu exists")
-    else:
-        print("File does not exist")
-        result = create_vtk_meshio(f, step=dx)
-        chunks[i] = {f}
-        print("with meshio:", rank, f, timer() - start, max(result.point_data["pgv"]))
-        result.write(f + ".vtu")
-
-chunks = comm.gather(chunks, root=0)
-
-if rank == 0:
-    with meshio.xdmf.TimeSeriesWriter("shakemovie_vz.xdmf") as writer:
-        filenames = glob.glob("moviedata*.vtu")
-        filenames.sort()
-
-        mesh = meshio.read(filenames[0])
-
-        points = mesh.points
-        cells = mesh.cells
-        writer.write_points_cells(points, cells)
-        if dt != 0:
-            t = int(filenames[0].split("moviedata")[-1].split(".")[0]) * dt
-        else:
-            t = 0
-        writer.write_data(t, point_data={"vz": mesh.point_data["vz"]})
-        for it, f in enumerate(filenames[1:]):
-            if dt != 0:
-                t = int(f.split("moviedata")[-1].split(".")[0]) * dt
+    print(f"Rank {rank} started")
+    for f in glob.iglob(fs):
+        idx = int(f.split("moviedata")[-1].split(".")[0])
+        if rank == ((idx % (size - 1)) + 1):
+            start = timer()
+            if os.path.exists(f + ".vtu"):
+                print("with meshio:", rank, f"File {f}.vtu exists")
             else:
-                t = it + 1
-            mesh = meshio.read(f)
-            writer.write_data(t, point_data={"vz": mesh.point_data["vz"]})
-
-    with meshio.xdmf.TimeSeriesWriter("shakemovie_full.xdmf") as writer:
-        filenames = glob.glob("moviedata*.vtu")
-        filenames.sort()
-
-        mesh = meshio.read(filenames[0])
-
-        points = mesh.points
-        cells = mesh.cells
-        writer.write_points_cells(points, cells)
-        if dt != 0:
-            t = int(filenames[0].split("moviedata")[-1].split(".")[0]) * dt
+                print("with meshio:", rank, f"File {f}.vtu does not exist")
+                result = create_vtk_meshio(f, step=dx)
+                print("with meshio:", rank, f, timer() - start, max(result.point_data["pgv"]))
+                result.write(f + ".vtu")
+            comm.send(idx, dest=0)
         else:
-            t = 0
-        writer.write_data(t, point_data=mesh.point_data)
-        for it, f in enumerate(filenames[1:]):
-            if dt != 0:
-                t = int(f.split("moviedata")[-1].split(".")[0]) * dt
-            else:
-                t = it + 1
-            mesh = meshio.read(f)
-            writer.write_data(t, point_data=mesh.point_data)
-
-    with meshio.xdmf.TimeSeriesWriter("shakemovie_pgv.xdmf") as writer:
-        filenames = glob.glob("moviedata*.vtu")
-        filenames.sort()
-
-        mesh = meshio.read(filenames[0])
-
-        points = mesh.points
-        cells = mesh.cells
-        writer.write_points_cells(points, cells)
-        if dt != 0:
-            t = int(filenames[0].split("moviedata")[-1].split(".")[0]) * dt
-        else:
-            t = 0
-        writer.write_data(t, point_data={"vz": mesh.point_data["pgv"]})
-        for it, f in enumerate(filenames[1:]):
-            if dt != 0:
-                t = int(f.split("moviedata")[-1].split(".")[0]) * dt
-            else:
-                t = it + 1
-            mesh = meshio.read(f)
-            writer.write_data(t, point_data={"vz": mesh.point_data["pgv"]})
+            print(f"with meshio: {rank}, skip file {f}")
+    comm.send(TERMINATION_MSG, dest=0)
+print(f"Rank {rank} terminated")
