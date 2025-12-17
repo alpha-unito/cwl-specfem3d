@@ -13,9 +13,12 @@ import gc
 import glob
 import os
 from timeit import default_timer as timer
+import fnmatch
 
 import meshio
 import numpy
+import mpi4py
+mpi4py.rc.thread_level = "single"
 from mpi4py import MPI
 from scipy.interpolate import griddata
 
@@ -110,12 +113,15 @@ parser = argparse.ArgumentParser(description="converting specfem3d moviedata")
 parser.add_argument("--dt", type=float, default=0, help="interpolation timestep")
 parser.add_argument("--dx", type=float, default=5000, help="interpolation step")
 parser.add_argument(
-    "--file", type=str, default="moviedata??????", help="moviedata file"
+    "--file-pattern", type=str, default="moviedata??????", help="moviedata file"
 )
+parser.add_argument("--input", type=str, default=".", help="Input directory wiuth moviedata")
+
 args = parser.parse_args()
 dt = args.dt
 dx = args.dx
-fs = args.file
+file_pattern = args.file_pattern
+input_directory = args.input
 
 if rank == 0:
     print("timestep", dt, " horizontal step", dx)
@@ -141,7 +147,11 @@ if rank == 0:
                 print(f"Received {termination_msgs}/{size - 1} termination messages")
 else:
     print(f"Rank {rank} started")
-    for f in glob.iglob(fs):
+    for dir_entity in os.scandir(input_directory):
+        if not fnmatch.fnmatch(dir_entity.name, file_pattern):
+            continue
+        f = dir_entity.name
+        
         idx = int(f.split("moviedata")[-1].split(".")[0])
         if rank == ((idx % (size - 1)) + 1):
             start = timer()
