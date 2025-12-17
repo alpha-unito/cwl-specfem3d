@@ -14,6 +14,7 @@ import glob
 import os
 from timeit import default_timer as timer
 import fnmatch
+from time import sleep
 
 import meshio
 import numpy
@@ -133,7 +134,10 @@ if rank == 0:
     ):
         while termination_msgs < (size - 1):
             if (idx := comm.recv(source=MPI.ANY_SOURCE)) != TERMINATION_MSG:
-                mesh = meshio.read(f"moviedata{idx:06}.vtu")
+                vtu_path = f"{input_directory}/moviedata{idx:06}.vtu"
+                while not os.path.exists(vtu_path):
+                    sleep(0.5)
+                mesh = meshio.read(vtu_path)
                 if not full_writer.has_mesh:
                     full_writer.write_points_cells(mesh.points, mesh.cells)
                     pgv_writer.write_points_cells(mesh.points, mesh.cells)
@@ -150,7 +154,7 @@ else:
     for dir_entity in os.scandir(input_directory):
         if not fnmatch.fnmatch(dir_entity.name, file_pattern):
             continue
-        f = dir_entity.name
+        f = input_directory + "/" + dir_entity.name
         
         idx = int(f.split("moviedata")[-1].split(".")[0])
         if rank == ((idx % (size - 1)) + 1):
