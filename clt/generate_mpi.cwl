@@ -15,6 +15,8 @@ requirements:
       - entry: $(inputs.database)
         entryname: $(inputs.localpath)
         writable: true
+      - entry: $(inputs.tomography)
+        entryname: $(inputs.tomography_path)
   InlineJavascriptRequirement: {}
   ResourceRequirement:
     coresMin: $(inputs.processes)
@@ -33,6 +35,8 @@ inputs:
       position: 1
       prefix: -np
   stations: File
+  tomography: Directory?
+  tomography_path: string?
 outputs:
   db:
     type: Directory

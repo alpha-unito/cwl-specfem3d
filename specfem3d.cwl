@@ -14,6 +14,7 @@ inputs:
   meshdir: Directory
   parfile: File
   stations: File
+  tomography: Directory?
 outputs:
   full:
     type: File
@@ -75,6 +76,7 @@ steps:
       parfile: parfile
       processes: get_processes/out
       stations: stations
+      tomography: tomography
     out: [db, outfile, surfaceheader, valuesheader]
   simulate:
     run: simulate.cwl

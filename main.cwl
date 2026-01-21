@@ -37,6 +37,7 @@ inputs:
       fields:
         script: File
   stations: File[]
+  tomography: Directory?
 
 outputs:
   aggregated:
@@ -87,6 +88,7 @@ steps:
       meshdir: meshdir
       parfile: parfiles
       stations: stations
+      tomography: tomography
     scatter: [cmtsolution, parfile, stations]
     scatterMethod: dotproduct
     out: [full, graphics, headers, outfiles, pgv, seismograms, shakingdata, vz]

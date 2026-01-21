@@ -15,6 +15,8 @@ requirements:
       - entry: $(inputs.database)
         entryname: $(inputs.localpath)
         writable: true
+      - entry: $(inputs.tomography)
+        entryname: $(inputs.tomography_path)
   InlineJavascriptRequirement: {}
 baseCommand: [xgenerate_databases]
 inputs:
@@ -23,6 +25,8 @@ inputs:
   localpath: string
   parfile: File
   stations: File
+  tomography: Directory?
+  tomography_path: string?
 outputs:
   db:
     type: Directory

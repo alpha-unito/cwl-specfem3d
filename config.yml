@@ -19,7 +19,7 @@ parfiles:
 reduction:
   script:
     class: File
-    path: scripts/mpi_moviedata2vtk.py
+    path: scripts/manipulate_shakemovie.py
 stations:
   - class: File
     path: data/CF1/STATIONS

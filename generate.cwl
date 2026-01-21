@@ -10,6 +10,7 @@ inputs:
   parfile: File
   processes: int
   stations: File
+  tomography: Directory?
 outputs:
   db:
     type: Directory
@@ -36,6 +37,11 @@ outputs:
       - generate_mpi/valuesheader
     pickValue: the_only_non_null
 steps:
+  get_tomography_path:
+    run: clt/get_tomography_path.cwl
+    in:
+      parfile: parfile
+    out: [out]
   generate_simple:
     when: $(inputs.processes == 1)
     run: clt/generate_simple.cwl
@@ -45,6 +51,8 @@ steps:
       localpath: localpath
       parfile: parfile
       stations: stations
+      tomography: tomography
+      tomography_path: get_tomography_path/out
     out: [db, outfile, surfaceheader, valuesheader]
   generate_mpi:
     when: $(inputs.processes > 1)
@@ -56,4 +64,6 @@ steps:
       parfile: parfile
       processes: processes
       stations: stations
+      tomography: tomography
+      tomography_path: get_tomography_path/out
     out: [db, outfile, surfaceheader, valuesheader]
