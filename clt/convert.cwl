@@ -16,7 +16,7 @@ requirements:
     expressionLib:
       - { $include: parfile.js }
   ResourceRequirement:
-    coresMin: $(inputs.processes)
+    coresMin: $(inputs.interpolation.processes)
 baseCommand: [mpirun]
 arguments:
   - position: 3
@@ -27,6 +27,11 @@ inputs:
     type:
       type: record
       fields:
+        processes:
+          type: int
+          inputBinding:
+            position: 1
+            prefix: -np
         script:
           type: File
           inputBinding:
@@ -40,11 +45,6 @@ inputs:
   parfile:
     type: File
     loadContents: true
-  processes:
-    type: int
-    inputBinding:
-      position: 1
-      prefix: -np
 outputs:
   full:
     type: File

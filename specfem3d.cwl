@@ -9,6 +9,7 @@ inputs:
     type:
       type: record
       fields:
+        processes: int
         script: File
         step: float
   meshdir: Directory
@@ -96,5 +97,4 @@ steps:
       interpolation: interpolation
       moviedata: simulate/moviedata
       parfile: parfile
-      processes: get_processes/out
     out: [full, pgv, vz]

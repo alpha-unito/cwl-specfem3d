@@ -4,6 +4,7 @@ cmtsolutions:
   - class: File
     path: data/CF2/CMTSOLUTION
 interpolation:
+  processes: 32
   script:
     class: File
     path: scripts/mpi_moviedata2vtk.py

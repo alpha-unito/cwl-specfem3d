@@ -27,6 +27,7 @@ inputs:
     type:
       type: record
       fields:
+        processes: int
         script: File
         step: float
   meshdir: Directory
