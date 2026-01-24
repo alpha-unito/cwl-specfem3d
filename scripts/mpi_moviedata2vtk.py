@@ -33,7 +33,7 @@ if size < 2:
 TERMINATION_MSG = -1
 
 def read_moviedata(
-    f, step=250, endian=">f", xmin=None, xmax=None, ymin=None, ymax=None
+    f, step=250, xmin=None, xmax=None, ymin=None, ymax=None
 ):
     data = numpy.fromfile(f, dtype=numpy.float32)
     field = 6
@@ -69,7 +69,7 @@ def read_moviedata(
 
 
 def create_vtk_meshio(f, step=250, topo=None, ymax=None):
-    X, Y, zs, vxs, vys, vzs, pgv = read_moviedata(f, step=step, endian=False, ymax=ymax)
+    X, Y, zs, vxs, vys, vzs, pgv = read_moviedata(f, step=step, ymax=ymax)
     points = numpy.column_stack([X.ravel(), Y.ravel(), zs.ravel()])
     ids = numpy.arange(len(points))
     ids.shape = X.shape
@@ -99,22 +99,17 @@ def create_vtk_meshio(f, step=250, topo=None, ymax=None):
     return mesh
 
 
-def flatten_concatenation(matrix):
-    flat_list = []
-    for row in matrix:
-        flat_list += row
-        return flat_list
-
-
 parser = argparse.ArgumentParser(description="converting specfem3d moviedata")
 parser.add_argument("--dt", type=float, default=0, help="interpolation timestep")
 parser.add_argument("--dx", type=float, default=5000, help="interpolation step")
+parser.add_argument("--ntstep", type=int, default=30, help="ntstep between frames")
 parser.add_argument(
     "--file", type=str, default="moviedata??????", help="moviedata file"
 )
 args = parser.parse_args()
 dt = args.dt
 dx = args.dx
+ntstep = args.ntstep
 fs = args.file
 
 if rank == 0:
@@ -127,7 +122,9 @@ if rank == 0:
     ):
         while termination_msgs < (size - 1):
             if (idx := comm.recv(source=MPI.ANY_SOURCE)) != TERMINATION_MSG:
-                mesh = meshio.read(f"moviedata{idx:06}.vtu")
+                file_name = f"moviedata{idx:06}.vtu"
+                print(f"Received {file_name}")
+                mesh = meshio.read(file_name)
                 if not full_writer.has_mesh:
                     full_writer.write_points_cells(mesh.points, mesh.cells)
                     pgv_writer.write_points_cells(mesh.points, mesh.cells)
@@ -143,7 +140,7 @@ else:
     print(f"Rank {rank} started")
     for f in glob.iglob(fs):
         idx = int(f.split("moviedata")[-1].split(".")[0])
-        if rank == ((idx % (size - 1)) + 1):
+        if rank == (((idx // ntstep) % (size - 1)) + 1):
             start = timer()
             if os.path.exists(f + ".vtu"):
                 print("with meshio:", rank, f"File {f}.vtu exists")
@@ -153,7 +150,5 @@ else:
                 print("with meshio:", rank, f, timer() - start, max(result.point_data["pgv"]))
                 result.write(f + ".vtu")
             comm.send(idx, dest=0)
-        else:
-            print(f"with meshio: {rank}, skip file {f}")
     comm.send(TERMINATION_MSG, dest=0)
 print(f"Rank {rank} terminated")

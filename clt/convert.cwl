@@ -22,6 +22,9 @@ arguments:
   - position: 3
     prefix: --dt
     valueFrom: "$( parseFloat((new ParFileParser(inputs.parfile.contents)).get('DT')) )"
+  - position: 5
+    prefix: --ntstep
+    valueFrom: "$( parseFloat((new ParFileParser(inputs.parfile.contents)).get('NTSTEP_BETWEEN_FRAMES')) )"
 inputs:
   interpolation:
     type:
