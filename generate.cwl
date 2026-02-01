@@ -50,6 +50,7 @@ steps:
       database: database
       localpath: localpath
       parfile: parfile
+      processes: processes
       stations: stations
       tomography: tomography
       tomography_path: get_tomography_path/out

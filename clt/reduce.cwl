@@ -4,19 +4,27 @@ hints:
   SoftwareRequirement:
     packages:
       - package: meshio
-      - package: mpi4py
       - package: numpy
-      - package: scipy
+requirements:
+  InlineJavascriptRequirement:
+    expressionLib:
+      - { $include: parfile.js }
 baseCommand: [python]
+arguments:
+  - position: 4
+    prefix: --dt
+    valueFrom: "$( parseFloat((new ParFileParser(inputs.parfile.contents)).get('DT')) )"
 inputs:
   full:
     type:
       type: array
       items: File
       inputBinding:
+        position: 2
         prefix: --file
-    inputBinding:
-      position: 2
+  parfile:
+    type: File
+    loadContents: true
   reduction:
     type:
       type: record
@@ -25,9 +33,19 @@ inputs:
           type: File
           inputBinding:
             position: 1
+        scenario:
+          type: string?
+          inputBinding:
+            position: 3
+            prefix: --scenario
+        seed:
+          type: int?
+          inputBinding:
+            position: 5
+            prefix: --seed
 outputs:
   aggregated:
     type: File
     outputBinding:
-      glob: "aggregated_shakemovie_full.xdmf"
+      glob: "aggregated_full.xdmf"
     secondaryFiles: ^.h5
