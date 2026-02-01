@@ -14,12 +14,15 @@ import glob
 import os
 from timeit import default_timer as timer
 
+
+os.environ["OPENBLAS_NUM_THREADS"] = "1"
+
+
 import meshio
 import numpy
 from mpi4py import MPI
 from scipy.interpolate import griddata
 
-os.environ["OPENBLAS_NUM_THREADS"] = "1"
 
 comm = MPI.COMM_WORLD
 size = comm.Get_size()

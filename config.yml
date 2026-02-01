@@ -12,15 +12,13 @@ interpolation:
 meshdir:
   class: Directory
   path: data/MESH
-parfiles:
-  - class: File
-    path: data/CF1/Par_file
-  - class: File
-    path: data/CF2/Par_file
+parfile:
+  class: File
+  path: data/CF1/Par_file
 reduction:
   script:
     class: File
-    path: scripts/manipulate_shakemovie.py
+    path: scripts/building_scenario_xdmf.py
 stations:
   - class: File
     path: data/CF1/STATIONS

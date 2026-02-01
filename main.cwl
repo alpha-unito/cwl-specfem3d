@@ -31,12 +31,14 @@ inputs:
         script: File
         step: float
   meshdir: Directory
-  parfiles: File[]
+  parfile: File
   reduction:
     type:
       type: record
       fields:
         script: File
+        scenario: string?
+        seed: int?
   stations: File[]
   tomography: Directory?
 
@@ -87,15 +89,16 @@ steps:
       cmtsolution: cmtsolutions
       interpolation: interpolation
       meshdir: meshdir
-      parfile: parfiles
+      parfile: parfile
       stations: stations
       tomography: tomography
-    scatter: [cmtsolution, parfile, stations]
+    scatter: [cmtsolution, stations]
     scatterMethod: dotproduct
     out: [full, graphics, headers, outfiles, pgv, seismograms, shakingdata, vz]
   reduce:
     run: clt/reduce.cwl
     in:
       full: specfem3d/full
+      parfile: parfile
       reduction: reduction
     out: [aggregated]
